@@ -17,7 +17,7 @@
     "run": "node dist/index.js",
     "build": "tsc",
     "dev": "nodemon src/index.ts",
-    "test": "jest"
+    "test": "jest --silent"
   },
   "keywords": [],
   "author": "",
