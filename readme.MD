@@ -2,10 +2,9 @@
 
 Similar to OBS Replay Buffer but for Twitch.
 
+To understand about the Twitch frontend API and how to use it, check out [notes.md](notes.MD).
 
 ## Todo
-
-
 
 ## Features
 
