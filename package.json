@@ -11,7 +11,7 @@
   },
   "name": "twitchreplay",
   "description": "Similar to OBS Replay Buffer but for Twitch.",
-  "version": "0.1",
+  "version": "0.1.0",
   "main": "src/index.ts",
   "scripts": {
     "run": "node dist/index.js",
