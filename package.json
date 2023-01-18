@@ -16,7 +16,7 @@
   "scripts": {
     "run": "node dist/index.js",
     "build": "tsc",
-    "setup": "npm install -g typescript && npm install -g ts-node &&",  
+    "setup": "npm install -g typescript && npm install -g ts-node",  
     "dev": "nodemon src/index.ts",
     "test": "jest --silent"
   },
