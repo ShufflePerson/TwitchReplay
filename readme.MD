@@ -2,9 +2,14 @@
 
 Similar to OBS Replay Buffer but for Twitch.
 
+
+## Todo
+
+
+
 ## Features
 
-- Automatically record the last `x` minutes of your stream, x being the number you set in the config.
+- Automatically record the last `x` minutes of your stream, `x` being the number you set in the config.
 - Automatically syncs and adds chat replay to the video.
 - Exports video in chosen format (mp4, mkv, webm, etc.)
 
