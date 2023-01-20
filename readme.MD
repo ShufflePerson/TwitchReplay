@@ -15,6 +15,7 @@ To understand about the Twitch frontend API and how to use it, check out [notes.
 ## Requirements
 
 - [Node.js](https://nodejs.org/en/download/)
+- [FFmpeg](https://www.gyan.dev/ffmpeg/builds/)
 
 ## Installation
 
