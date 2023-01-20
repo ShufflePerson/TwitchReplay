@@ -40,6 +40,8 @@ Response:
 
 Returned in the `PlaybackAccessToken` response, it looks like this: `na9zZ4lhpN8jLn6KyShSaFAl4MZUq2ub`
 
+It is also returned in the `Set-Cookie` header as `unique_id` when making a `GET` request to the channel page.
+
 ### Capturing the `Client-ID`
 
 GET Request to `https://twitch.tv/NAME_OF_CHANNEL`
