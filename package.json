@@ -5,7 +5,10 @@
     "@types/node": "^18.11.18",
     "axios": "^1.2.3",
     "express": "^4.18.2",
+    "graphql": "^16.6.0",
+    "graphql-request": "^5.1.0",
     "hh-mm-ss": "^1.2.0",
+    "logging-library": "^0.5.0",
     "ts-node": "^10.9.1",
     "ts-transformer-keys": "^0.4.4"
   },
@@ -16,7 +19,7 @@
   "scripts": {
     "run": "node dist/index.js",
     "build": "tsc",
-    "setup": "npm install -g typescript && npm install -g ts-node",  
+    "setup": "npm install -g typescript && npm install -g ts-node",
     "dev": "nodemon src/index.ts",
     "test": "jest --silent"
   },
