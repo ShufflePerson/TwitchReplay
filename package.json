@@ -10,6 +10,7 @@
     "graphql-request": "^5.1.0",
     "hh-mm-ss": "^1.2.0",
     "logging-library": "^0.5.0",
+    "m3u8stream": "^0.8.6",
     "ts-node": "^10.9.1",
     "ts-transformer-keys": "^0.4.4"
   },
