@@ -143,6 +143,17 @@ namespace client {
         })
     }
 
+
+    export function get_playlist_data(channel_name: string = globals.channel_name): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            
+            let resp = await axios.get(`
+                https://usher.ttvnw.net/api/channel/hls/${channel_name}.m3u8?allow_source=true&sig=${globals.signature}&token=${globals.token} `)
+
+            resolve(resp.data);
+        });
+    }
+
 }
 
 export default client;
