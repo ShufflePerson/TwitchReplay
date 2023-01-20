@@ -66,6 +66,8 @@ To simulate the query, we only have to focus on two query parameters, `token` an
 
 "play_session_id" is a random string, it can be anything.
 
+In the end, the only query parameters that we need to provide are: `allow_source`, `sig` and `token`. The rest are optional.
+
 Query:
 
 ```
