@@ -8,8 +8,6 @@ The "un-official" API is a API used by their frontend, when the page loads, to f
 
 It was never designed or meant to be used by custom programs and apps. Up side is that you do not need a OAuth key for it, hence cannot be tracked or rate limited. Down side is that it is not documented and can change at any time and is hard to use.
 
-
-
 ### Capturing the `PlaybackAccessToken`
 
 GET request to `https://gql.twitch.tv/gql`
@@ -20,6 +18,7 @@ Query for GraphQL is the following:
 `Device-ID` is under (data.streamPlaybackAccessToken.value).device_id
 
 Response:
+
 ```json
 {
   "data": {
@@ -49,9 +48,6 @@ Parse left dilimiter `clientId="` and right delimiter `"`
 
 Client-ID looks like this: `kimne78kx3ncx6brgo4mv6wki5h1ko`
 
-
-
-
 ## Endpoints
 
 Endpoints are the URLs that you can send requests to, they are used to fetch information about the stream, the user watching, the chat, etc.
@@ -61,6 +57,32 @@ Endpoints are the URLs that you can send requests to, they are used to fetch inf
 This is the endpoint for the GraphQL API, it is used to fetch information about the user watching, the stream, the chat, etc.
 
 Response and request format is JSON.
+
+### https://usher.ttvnw.net/api/channel/hls/CHANNEL_NAME.m3u8
+
+This is the endpoint for the HLS API, it is used to fetch the stream video m38u file.
+
+To simulate the query, we only have to focus on two query parameters, `token` and `sig`. And these are already in the `PlaybackAccessToken` response.
+
+"play_session_id" is a random string, it can be anything.
+
+Query:
+
+```
+acmb: e30=
+allow_source: true
+fast_bread: true
+p: 7740222
+play_session_id: fdce79578607c1d77bf4ab4dccdc35bc
+player_backend: mediaplayer
+playlist_include_framerate: true
+reassignments_supported: true
+sig: 765c2e1e153b4b6528f6c50ffd248876205fa02d
+supported_codecs: avc1
+token: {"adblock":false,"authorization":{"forbidden":false,"reason":""},"blackout_enabled":false,"channel":"xqc","channel_id":71092938,"chansub":{"restricted_bitrates":[],"view_until":1924905600},"ci_gb":false,"geoblock_reason":"","device_id":"WQHrRAnBXWp5DBBiF4fg1p2qm2Gw8ENp","expires":1674221688,"extended_history_allowed":false,"game":"","hide_ads":false,"https_required":true,"mature":false,"partner":false,"platform":"web","player_type":"site","private":{"allowed_to_view":true},"privileged":false,"role":"","server_ads":true,"show_ads":true,"subscriber":false,"turbo":false,"user_id":null,"user_ip":"82.103.181.178","version":2}
+cdm: wv
+player_version: 1.17.0
+```
 
 ### `wss://pubsub-edge.twitch.tv/v1`
 
@@ -138,4 +160,3 @@ Example:
 }
 `
 ```
-
