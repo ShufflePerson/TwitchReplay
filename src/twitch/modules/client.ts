@@ -145,7 +145,7 @@ namespace client {
 
 
     export function get_basic_playlist_url(channel_name: string = globals.channel_name): string {
-        return `https://usher.ttvnw.net/api/channel/hls/${channel_name}.m3u8?allow_source=true&sig=${globals.signature}&token=${globals.token}&play_session_id=58c5b1f81e24d89e153bdf2e9be54a18`
+        return `https://usher.ttvnw.net/api/channel/hls/${channel_name}.m3u8?allow_source=true&sig=${globals.signature}&token=${globals.token}`
     }
 
     export function get_full_playlist_url(channel_name: string = globals.channel_name): Promise<string> {
