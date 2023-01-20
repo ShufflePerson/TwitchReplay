@@ -128,7 +128,7 @@ namespace client {
             let data = await axios.get(`https://twitch.tv/${channel_name}`);
 
             try {
-                let title = data.data.split('property="og:description" content="')[1].split('"')[0];
+                let title = data.data.split('<meta name="description" content="')[1].split('"')[0];
 
                 log.debug(`Got stream title and set it to ${cap_text(title)}`)
 
