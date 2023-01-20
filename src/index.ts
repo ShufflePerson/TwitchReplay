@@ -25,7 +25,7 @@ import cap_text from "./utils/cap_text";
 
     await client.set_playback_access_token();
 
-    await client.get_device_id();
+    //await client.get_device_id();
 
 
     console.log(globals);
