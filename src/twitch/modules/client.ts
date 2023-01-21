@@ -52,15 +52,29 @@ namespace client {
     export async function set_playback_access_token(login: string = globals.channel_name, is_live: boolean = true, vod_id: string = "", is_vod: boolean = false, playerType: string = "site") {
         return new Promise(async (resolve, reject) => {
             log.debug(`Setting playback access token for ${login}`);
-            const data = await request('https://gql.twitch.tv/gql', graph_gql_query, {
-                login,
-                isLive: is_live,
-                vodID: vod_id,
-                isVod: is_vod,
-                playerType
-            }, {
-                "Client-ID": await get_client_id(),
-            })
+
+            let data: {
+                streamPlaybackAccessToken: {
+                    value: string,
+                    signature: string
+                }
+            };
+
+            try {
+                data = await request('https://gql.twitch.tv/gql', graph_gql_query, {
+                    login,
+                    isLive: is_live,
+                    vodID: vod_id,
+                    isVod: is_vod,
+                    playerType
+                }, {
+                    "Client-ID": await get_client_id(),
+                })
+            } catch (ex) {
+                log.error("Streamer is most likely offline.")
+                log.error(ex);
+                return reject(ex);
+            }
             globals.token = data.streamPlaybackAccessToken.value;
             globals.signature = data.streamPlaybackAccessToken.signature;
             globals.channel_id = JSON.parse(data.streamPlaybackAccessToken.value).channel_id;
@@ -90,6 +104,10 @@ namespace client {
 
     export async function get_device_id(channel_name: string = globals.channel_name): Promise<string> {
         return new Promise(async (resolve, reject) => {
+            log.warning("get_device_id is under development.");
+            return resolve("NONE");
+
+
             if (globals['Device-ID']) return resolve(globals['Device-ID']);
 
             log.debug(`Getting device id`)
@@ -108,7 +126,7 @@ namespace client {
             unique_id = unique_id.split("unique_id=")[1];
             if (unique_id == undefined) {
                 log.error(`Failed to get device id`);
-                
+
                 return reject("Failed to get device id");
             }
 
