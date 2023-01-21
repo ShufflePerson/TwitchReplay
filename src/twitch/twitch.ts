@@ -18,10 +18,7 @@ export namespace twitch {
             try {
                 globals.channel_name = channel_name;
                 
-                await client.get_device_id();
-                await client.get_client_id();
                 await client.set_playback_access_token();
-                await client.get_full_playlist_url();
 
                 logger.info("Twitch initialized");
 
