@@ -40,7 +40,7 @@ readline.emitKeypressEvents(process.stdin);
 
     logger.info("Attempting to start capture");
     
-    let capture_started: boolean = await clipper.start_capture();
+    let capture_started: boolean = await clipper.start_capture(true);
     if (!capture_started) {
         logger.error("Failed to start capture. Please check the log file for more information.");
         return;
