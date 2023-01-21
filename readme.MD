@@ -6,6 +6,15 @@ To understand about the Twitch frontend API and how to use it, check out [notes.
 
 ## Todo
 
+- [ ] Support Linux all the way
+- [ ] Implement Chat functionality
+  - [ ] Get Current Chat
+  - [ ] Keep Chat in sync and saved in a efficient way
+- [ ] Blend Chat & Video
+  - [ ] A frontend for the Chat
+  - [ ] A way to export the frontend of the chat with the video
+- [ ] Implement a GUI
+
 ## Features
 
 - Automatically record the last `x` minutes of your stream, `x` being the number you set in the config.
