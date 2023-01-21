@@ -16,6 +16,8 @@ export namespace twitch {
         return new Promise(async (resolve, reject) => {
             logger.info("Initializing Twitch");
             try {
+                globals.channel_name = channel_name;
+                
                 await client.get_device_id();
                 await client.get_client_id();
                 await client.set_playback_access_token();
