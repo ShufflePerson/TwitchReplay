@@ -31,8 +31,9 @@ class log_handler extends BaseHandler {
                 break;
         }
 
-        fs.appendFileSync("./debug.log", msg + " \r\n");
+
         console.log(msg);
+        fs.appendFileSync("./debug.log", record.message + " \r\n");
     }
 } namespace logging {
     let logger = new Logger()
