@@ -1,9 +1,5 @@
-# nodejs .gitignore
-
 node_modules 
 npm-debug.log
-
 dist 
-
-
+debug.log
 cache
