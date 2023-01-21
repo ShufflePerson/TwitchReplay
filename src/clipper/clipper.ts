@@ -39,7 +39,7 @@ namespace clipper {
             if (is_linux())
                 execSync("rm -rf ./cache");
             else
-                execSync("rmdir /s /q ./cache");
+                execSync("rmdir /s /q cache");
         }
 
 
