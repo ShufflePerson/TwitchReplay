@@ -2,6 +2,6 @@
     "targetUsername": "xqc",
     "targetDirectory": "./clips",
     "recordLength": "00:00:30",
-    "videoFormat": "mp4",
+    "videoFormat": "mkv",
     "serverPort": 3000
 }
