@@ -6,7 +6,6 @@ To understand about the Twitch frontend API and how to use it, check out [notes.
 
 ## Todo
 
-- [ ] Support Linux all the way
 - [ ] Implement Chat functionality
   - [ ] Get Current Chat
   - [ ] Keep Chat in sync and saved in a efficient way
