@@ -55,7 +55,7 @@ namespace clipper {
     }
 
 
-    export async function start_capture(): Promise<boolean> {
+    export async function start_capture(is_first_run: boolean): Promise<boolean> {
 
         return new Promise(async (resolve, reject) => {
             logger.info("Starting Capture");
@@ -63,6 +63,8 @@ namespace clipper {
             mpeg = ffmpeg(await client.get_full_playlist_url())
                 .addOptions([
                     '-fflags', '+genpts',
+                    is_first_run ? "-ss" : "",
+                    is_first_run ? "16" : "",
                     '-c', 'copy',
                     "-f", "segment",
                     "-segment_time", "5",
@@ -74,7 +76,16 @@ namespace clipper {
                 }).on("start", function (command_line) {
                     logger.info("Capture has been started.");
                     logger.debug(command_line);
-                    resolve(true);
+                    if (!is_first_run)
+                        resolve(true);
+                    else {
+                        logger.info("Waiting for ad-break to end")
+                        setTimeout(() => {
+                            logger.info("Ad-break ended. Continuing capture")
+                            resolve(true);
+                        }, 16 * 1000);
+                    }
+
                 }).on("error", function (err) {
                     logger.error("An error occurred: " + err.message)
                     resolve(false);
