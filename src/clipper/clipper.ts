@@ -59,17 +59,25 @@ namespace clipper {
 
         return new Promise(async (resolve, reject) => {
             logger.info("Starting Capture");
+            
+            let ffmpeg_options: string[] = [];
+
+            if (is_first_run) {
+                ffmpeg_options.push("-ss");
+                ffmpeg_options.push("16");
+            }
+
+            ffmpeg_options.push("-c");
+            ffmpeg_options.push("copy");
+            ffmpeg_options.push("-f");
+            ffmpeg_options.push("segment");
+            ffmpeg_options.push("-segment_time");
+            ffmpeg_options.push("5");
+            ffmpeg_options.push("./cache/buffer/%d.mp4");
+
 
             mpeg = ffmpeg(await client.get_full_playlist_url())
-                .addOptions([
-                    '-fflags', '+genpts',
-                    is_first_run ? "-ss" : "",
-                    is_first_run ? "16" : "",
-                    '-c', 'copy',
-                    "-f", "segment",
-                    "-segment_time", "5",
-                    "./cache/buffer/%d.mp4"
-                ])
+                .addOptions(ffmpeg_options)
                 .save(`./cache/${globals.channel_name}.mkv`)
                 .on('end', function () {
                     logger.info("Stream ended");
@@ -92,6 +100,40 @@ namespace clipper {
                 }).on("progress", function (progress) {
                     logger.debug("Processing: " + progress.timemark)
                 })
+        })
+    }
+
+    export function restart(): Promise<boolean> {
+        return new Promise(async (resolve, reject) => {
+            logger.info("Restarting capture");
+            mpeg.kill("SIGKILL");
+            await start_capture(false);
+            resolve(true);
+        })
+    }
+
+
+    export function clip(time_s: number): Promise<boolean> {
+        return new Promise(async (resolve, reject) => {
+
+            let clips_needed: number = Math.floor(time_s / 5);
+            let clips_available: number = fs.readdirSync("./cache/buffer").length;
+
+            logger.info("Clips needed: " + clips_needed);
+            logger.info("Clips available: " + clips_available);
+
+            if (clips_available < clips_needed) {
+                logger.warning("Not enough clips available. Capping to " + clips_available * 5 + " seconds");
+                clips_needed = clips_available;
+                time_s = clips_available * 5;
+            }
+
+            let output_name = `${get_config().targetDirectory}/${globals.channel_name}_${new Date().getTime()}.${get_config().videoFormat}`;
+
+            logger.info("Clipping " + time_s + " seconds to " + output_name);
+
+
+
         })
     }
 
