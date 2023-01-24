@@ -13,6 +13,8 @@
     "hh-mm-ss": "^1.2.0",
     "logging-library": "^0.5.0",
     "m3u8stream": "^0.8.6",
+    "node-libcurl": "^3.0.0",
+    "request": "^2.88.2",
     "ts-node": "^10.9.1",
     "ts-transformer-keys": "^0.4.4"
   },
@@ -36,6 +38,7 @@
     "@jest/globals": "^29.3.1",
     "@types/ffmpeg": "^1.0.4",
     "@types/fluent-ffmpeg": "^2.1.20",
+    "@types/request": "^2.48.8",
     "babel-jest": "^29.3.1",
     "jest": "^29.3.1",
     "ts-jest": "^29.0.5"
