@@ -5,6 +5,11 @@ import logging from '../../logging/logging';
 import cap_text from '../../utils/cap_text';
 
 
+
+import { Curl } from 'node-libcurl';
+const curl = new Curl();
+
+
 //#region GraphQL Query
 
 const graph_gql_query = gql`
@@ -102,41 +107,46 @@ namespace client {
         })
     }
 
-    export async function get_device_id(channel_name: string = globals.channel_name): Promise<string> {
+
+    export function get_device_id(channel_name: string = globals.channel_name): Promise<string> {
         return new Promise(async (resolve, reject) => {
-            log.warning("get_device_id is under development.");
-            return resolve("NONE");
-
-
-            if (globals['Device-ID']) return resolve(globals['Device-ID']);
 
             log.debug(`Getting device id`)
 
-            let resp = await axios.get(`https://twitch.tv/${channel_name}`);
+            curl.setOpt(Curl.option.URL, `https://twitch.tv/${channel_name}`);
+            curl.setOpt(Curl.option.FOLLOWLOCATION, true);
+            curl.setOpt(Curl.option.SSL_VERIFYPEER, false);
 
-            let set_cookies = resp.headers['set-cookie'];
-            let unique_id = "DEVICE_ID";
-            for (let i = 0; i < set_cookies.length; i++) {
-                if (set_cookies[i].includes("unique_id")) {
-                    unique_id = set_cookies[i];
-                    break;
+            curl.on('end', async (statusCode, body, headers) =>
+            { 
+                let set_cookies = headers[1]["Set-Cookie"];
+
+                let unique_id = "DEVICE_ID";
+                for (let i = 0; i < set_cookies.length; i++) {
+                    if (set_cookies[i].includes("unique_id")) {
+                        unique_id = set_cookies[i].split("unique_id=")[1].split(";")[0];
+                        break;
+                    } if (set_cookies[i].includes("server_session_id")) {
+                        globals['Server-Session'] = set_cookies[i].split("server_session_id=")[1].split(";")[0];
+                    }
                 }
-            }
 
-            unique_id = unique_id.split("unique_id=")[1];
-            if (unique_id == undefined) {
-                log.error(`Failed to get device id`);
+                if (unique_id == undefined) {
+                    log.error(`Failed to get device id`);
 
-                return reject("Failed to get device id");
-            }
+                    return reject("Failed to get device id");
+                }
 
-            globals['Device-ID'] = unique_id;
-
-            log.debug(`Got device id and set it to ${unique_id}`)
+                globals['Device-ID'] = unique_id;
+                resolve(unique_id);
+            });
 
 
-            resolve(unique_id);
-        })
+            curl.on('error', ((err, data) => {
+                console.log(err);
+            }));
+            curl.perform();
+        });
     }
 
     export async function get_stream_title(channel_name: string = globals.channel_name): Promise<string> {
