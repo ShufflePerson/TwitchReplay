@@ -2,6 +2,7 @@
 let globals = {
     "Device-ID": "", 
     "Client-ID": "",
+    "Server-Session": "",
     "token": "",
     "signature": "",
     "channel_name": "",
