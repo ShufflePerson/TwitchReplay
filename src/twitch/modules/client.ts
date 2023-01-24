@@ -74,6 +74,7 @@ namespace client {
                     playerType
                 }, {
                     "Client-ID": await get_client_id(),
+                    "Device-ID": await get_device_id(),
                 })
             } catch (ex) {
                 log.error("Streamer is most likely offline.")
@@ -138,6 +139,7 @@ namespace client {
                 }
 
                 globals['Device-ID'] = unique_id;
+                log.info(`Got device id and set it to ${unique_id}`)
                 resolve(unique_id);
             });
 
