@@ -27,7 +27,7 @@
     "build": "tsc",
     "setup": "npm install typescript && npm install --global typescript && npm install --global ts-node",
     "dev": "nodemon src/index.ts",
-    "test": "jest --silent"
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
