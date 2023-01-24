@@ -111,6 +111,7 @@ namespace client {
 
     export function get_device_id(channel_name: string = globals.channel_name): Promise<string> {
         return new Promise(async (resolve, reject) => {
+            if (globals['Device-ID']) return resolve(globals['Device-ID']);
 
             log.debug(`Getting device id`)
 
