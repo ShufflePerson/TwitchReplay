@@ -49,15 +49,20 @@ namespace seventv {
 
     export function get_channel_emotes(channel_id: string): Promise<t_seventv_emote[]> {
         return new Promise(async (resolve, reject) => {
-            let resp = await axios.get(endpoint + `users/${channel_id}/emotes`);
+            try {
+                let resp = await axios.get(endpoint + `users/${channel_id}/emotes`);
 
-            let data = resp.data as t_seventv_emote[];
+                let data = resp.data as t_seventv_emote[];
 
-            resolve(data);
+                resolve(data);
 
-            data.forEach((emote: t_seventv_emote) => {
-                add_cache_emote(emote);
-            })
+                data.forEach((emote: t_seventv_emote) => {
+                    add_cache_emote(emote);
+                })
+            } catch (ex) {
+                resolve([]);
+            }
+
         })
     }
 
