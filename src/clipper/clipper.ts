@@ -11,9 +11,12 @@ import { resolve } from 'path';
 import cli_spinners from 'cli-spinners';
 import is_dev from '../utils/is_dev';
 
+let sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
 namespace clipper {
     let logger = logging.get_logger().withContext("clipper");
     let mpeg = ffmpeg();
+    let current_buffer_started = 0
 
     function initlize_ffmpeg() {
         logger.info("Initializing ffmpeg");
@@ -71,7 +74,7 @@ namespace clipper {
             ffmpeg_options.push("-f");
             ffmpeg_options.push("segment");
             ffmpeg_options.push("-segment_time");
-            ffmpeg_options.push("5");
+            ffmpeg_options.push(globals.buffer_size.toString());
             ffmpeg_options.push("-segment_format");
             ffmpeg_options.push("mpegts");
             ffmpeg_options.push("-strict");
@@ -103,6 +106,11 @@ namespace clipper {
                 }).on("start", function (command_line) {
                     logger.info("Capture has been started.");
                     logger.debug(command_line);
+                    current_buffer_started = Date.now();
+                    setInterval(() => {
+                        current_buffer_started = Date.now();
+                        logger.debug("New buffer has begun");
+                    }, globals.buffer_size * 1000);
                     if (!is_first_run)
                         resolve(true);
                     else {
@@ -140,16 +148,26 @@ namespace clipper {
             resolve(true);
         })
     }
+    
+    function wait_for_buffer() {
+        return new Promise(async (resolve, reject) => {
+            setTimeout(() => {
+                resolve(true);
+            }, (current_buffer_started + globals.buffer_size * 1000 - Date.now()) + 3000);
+        })
+    }
 
 
     export function clip(time_s: number): Promise<boolean> {
         return new Promise(async (resolve, reject) => {
+            await wait_for_buffer();
 
             let buffer_needed: number = Math.round(time_s / globals.buffer_size);
             let buffer_available: number = fs.readdirSync("./cache/buffer").length - 1;
 
             logger.debug("Buffer needed: " + buffer_needed);
             logger.debug("Buffer available: " + buffer_available);
+
 
             if (buffer_available < buffer_needed) {
                 logger.warning("Not enough clips available. Capping to " + buffer_available * globals.buffer_size + " seconds");
@@ -165,6 +183,10 @@ namespace clipper {
             for (let i = buffer_available - buffer_needed; i < buffer_available; i++) {
                 command = command.addInput(`./cache/buffer/${i}.ts`);
             }
+
+            command.addOption("-threads", "0");
+            command.addOption("-preset", "ultrafast");
+            
 
             command.mergeToFile(output_name)
                 .on("start", function (command_line) {
