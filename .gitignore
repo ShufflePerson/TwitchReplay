@@ -4,3 +4,4 @@ dist
 debug.log
 cache
 *.mkv
+chromedriver.exe
