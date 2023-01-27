@@ -38,13 +38,13 @@ namespace clipper {
     }
 
 
-    function initlize_folders() {
+    export function initlize_folders() {
         logger.info("Initializing folders for clips");
-        if (fs.existsSync("./cache")) {
+        if (fs.existsSync("./cache") && fs.existsSync("./cache/buffer")) {
             if (is_linux())
-                execSync("rm -rf ./cache");
+                execSync("rm -rf ./cache/buffer");
             else
-                execSync("rmdir /s /q cache");
+                execSync("rmdir /s /q cache/buffer");
         }
 
 
