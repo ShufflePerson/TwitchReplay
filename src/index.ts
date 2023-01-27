@@ -14,6 +14,8 @@ import cap_text from "./utils/cap_text";
 import { twitch } from './twitch/twitch';
 import readline from 'readline';
 import clipper from './clipper/clipper';
+import chat from './twitch/modules/chat';
+import backend from './backend/backend';
 
 
 readline.emitKeypressEvents(process.stdin);
@@ -24,6 +26,7 @@ readline.emitKeypressEvents(process.stdin);
     let logger = logging.get_logger().withContext("main");
 
     logging.init();
+    backend.initlize();
 
 
     let twitch_init: boolean = await twitch.initlize();
@@ -34,6 +37,7 @@ readline.emitKeypressEvents(process.stdin);
 
 
     await client.get_device_id();
+    await chat.initlize();
 
     let stream_title: string = await client.get_stream_title();
 
