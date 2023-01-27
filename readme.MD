@@ -39,12 +39,11 @@ To understand about the Twitch frontend API and how to use it, check out [notes.
 
 - Run `start.bat` to start the server. (You can also run `npm run run` in the command line / terminal)
 - When you wanna save a clip, simply press "Save" on the GUI and the video will be saved in the directory you specified in the config.
-- If you wish to implement a custom solution to saving the clip, simply do a POST request to `http://x.x.x.x/api/save_clip` where `x.x.x.x` is the IP of the server. (You can also use `localhost` if you're running the server on the same machine as the client)
+- If you wish to implement a custom solution to saving the clip, simply do a POST request to `http://x.x.x.x/api/clip` where `x.x.x.x` is the IP of the server. (You can also use `localhost` if you're running the server on the same machine as the client)
 
 ## Notes
 
-- The program will automatically start recording when you launch the program.
-- The program will automatically stop recording when you close the program.
+- `TwitchClipper` starts recording as soon as you start the server.
 
 ## Credits
 
