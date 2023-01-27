@@ -174,7 +174,7 @@ namespace clipper {
                     logger.error("An error occurred: " + err.message)
                     resolve(false);
                 }).on("end", function () {
-                    logger.info("Clip ended");
+                    logger.info("Clip written");
                     resolve(true);
                 })
 
