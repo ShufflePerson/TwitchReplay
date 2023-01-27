@@ -86,13 +86,15 @@ namespace chat {
         })
     }
     
-    function initlize_folder() {
+    async function initlize_folder() {
         logger.info("Initializing Chat Folders")
         if (!existsSync("./cache"))
             mkdirSync("./cache");
         if(!existsSync("./cache/chat")) 
             mkdirSync("./cache/chat");
 
+        let channel_emotes = await seventv.get_channel_emotes(globals.channel_id.toString());
+        let global_emotes = await seventv.get_global_emotes();
         logger.info("Chat Folders Initialized")
     }
 
@@ -118,7 +120,7 @@ namespace chat {
         words = words.filter((word) => {
             return !message.emote_names.includes(word);
         });
-        
+
         for (let word of words) {
             let data: t_seventv_emote | null = await seventv.get_emote_by_name(word);
             if (data != null) {
