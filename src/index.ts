@@ -55,17 +55,6 @@ readline.emitKeypressEvents(process.stdin);
     }
 
 
-    setTimeout(async () => {
-        let clipped: boolean = await clipper.clip(10);
-        if (!clipped) {
-            logger.error("Failed to clip. Please check the log file for more information.");
-            return;
-        }
-
-        logger.info("Clip successful");
-    }, 12000);
-
-
 })();
 
 
