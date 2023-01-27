@@ -10,7 +10,7 @@ namespace ui_chat {
 
     let driver_build = new Builder()
         .forBrowser('chrome')
-        .setChromeOptions(new Options().headless().windowSize({ width: 1920, height: 1080 }))
+        .setChromeOptions(new Options().windowSize({ width: 1920, height: 1080 }))
     let driver: WebDriver;
 
     let log = logging.get_logger();
