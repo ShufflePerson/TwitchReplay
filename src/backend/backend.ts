@@ -53,7 +53,7 @@ namespace backend {
             const { duration } = req.body;
             let current_clips = readdirSync(get_config().targetDirectory);
 
-            await clipper.clip(duration * 1000)
+            await clipper.clip(duration * 60)
 
             let new_clip = readdirSync(get_config().targetDirectory).filter(clip => !current_clips.includes(clip))[0];
 
