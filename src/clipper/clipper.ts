@@ -186,7 +186,6 @@ namespace clipper {
 
     export function clean_up() {
         mpeg.kill("SIGKILL");
-        //delete cache
 
         if (is_dev()) {
 
