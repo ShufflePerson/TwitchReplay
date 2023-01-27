@@ -1,11 +1,12 @@
 import express from 'express';
-import { readdirSync, writeFileSync } from 'fs';
+import { readdir, readdirSync, writeFileSync } from 'fs';
 import logging from '../logging/logging';
 import client from '../twitch/modules/client';
 import get_config from '../utils/get_config';
 import globals from './../twitch/globals';
 import ffmpeg from 'fluent-ffmpeg'
 import { join } from "path";
+import clipper from '../clipper/clipper';
 
 
 
@@ -49,6 +50,14 @@ namespace backend {
         });
 
         app.post("/api/clip", async (req, res) => {
+            const { duration } = req.body;
+            let current_clips = readdirSync(get_config().targetDirectory);
+
+            await clipper.clip(duration * 1000)
+
+            let new_clip = readdirSync(get_config().targetDirectory).filter(clip => !current_clips.includes(clip))[0];
+
+            res.send({ clips:  [new_clip]});
         });
 
 
