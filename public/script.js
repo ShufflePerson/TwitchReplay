@@ -45,7 +45,7 @@ function add_clips(data) {
 
     });
 
-    document.getElementById("template_clip").remove();
+    document.getElementById("template_clip").style.display = "none";
 }
 
 function set_clips() {
