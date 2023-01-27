@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitch Clipper</title>
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+    <section class="title_section">
+        <div class="title">
+            <h1 id="streamer_name">xQc</h1>
+            <p id="streamer_title">MEGA TWITCH DRAMA GAMEPLAY JOIN NOW FAST GAMBA</p>
+        </div>
+        <div class="embed" id="twitch-embed">
+
+        </div>
+        <div class="clip_section">
+            <h4 style="display: none;" id="in_progress">Clip exporting, this will take a few seconds. Page will update automatically</h4>
+            <div class="slider">
+                <input type="range" min="1" max="30" value="1" class="slider" id="slider">
+            </div>
+            <button id="clip_btn" onclick="clip()" class="clip_btn">CLIP</button>
+            <p>Wish to change the streamer? Head over to <strong><a href="#settings">Settings</a></strong></p>
+        </div>
+    </section>
+
+    <section class="clips_section">
+        <div class="section_title">
+            <h3>Recent Clips</h3>
+            <p>Your most recently clipped clips.</p>
+        </div>
+        <div id="clips" class="clips_list">
+            <div id="template_clip" class="clip">
+                <video src=""></video>
+                <div class="clip_controls">
+                    <button class="btn_filled">UPLOAD</button>
+                    <button class="btn_outlined">DELETE</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="title_section">
+        <div class="section_title">
+            <h3>Settings</h3>
+            <p>Change and manage all of your settings here.</p>
+        </div>
+
+
+        <form action="/api/save_config" method="post">
+            <div class="settings">
+                <div class="setting">
+                    <p>Username</p>
+                    <input type="text" name="targetUsername" value="xQc">
+                </div>
+                <div class="setting">
+                    <p>Save Directory</p>
+                    <input type="text" name="targetDirectory" value="clips">
+                </div>
+                <div class="setting">
+                    <p>Save Format</p>
+                    <input type="text" name="videoFormat" value="mkv">
+                </div>
+                <div class="setting">
+                    <p>Server Port</p>
+                    <input type="text" name="serverPort" value="3000">
+                </div>
+            </div>
+            
+            <div class="settings_footer">
+                <button type="submit" class="btn_filled">SAVE</button>
+                <p>Server might need a restart*</p>
+            </div>
+        </form>
+
+
+    </section>
+    <script src="https://embed.twitch.tv/embed/v1.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
