@@ -27,11 +27,8 @@ function set_data() {
 }
 
 function add_clips(data) {
-    //data.clips is array of clip file names
-
 
     data.clips.forEach(function (clip) {
-        //div with id  "template_clip" is the template for the clips
         let template = document.getElementById("template_clip");
         let clone = template.cloneNode(true);
         clone.id = clip;
@@ -78,6 +75,12 @@ function clip() {
     document.getElementById("in_progress").style.display = "block";
     fetch("/api/clip", {
         method: "POST",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            "duration": slider.value
+        })
     }).then(response => response.json())
         .then(data => {
             console.log(data);
