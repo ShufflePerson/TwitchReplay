@@ -18,6 +18,7 @@
     "m3u8stream": "^0.8.6",
     "node-libcurl": "^3.0.0",
     "request": "^2.88.2",
+    "selenium": "^2.20.0",
     "ts-node": "^10.9.1",
     "ts-transformer-keys": "^0.4.4",
     "ws": "^8.12.0"
