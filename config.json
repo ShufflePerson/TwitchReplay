@@ -1,7 +1,6 @@
 {
-    "targetUsername": "xqc",
+    "targetUsername": "monstercat",
     "targetDirectory": "./clips",
-    "recordLength": "00:00:30",
     "videoFormat": "mkv",
-    "serverPort": 3000
+    "serverPort": "80"
 }
