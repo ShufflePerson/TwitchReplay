@@ -33,6 +33,11 @@ namespace ui_chat {
         if(!existsSync("./cache/chat")) {
             log.info("Creating chat folder");
             mkdirSync("./cache/chat");
+        } else {
+            if (is_linux())
+                execSync("rm -rf ./cache/chat/*");
+            else
+                execSync("del /s /q cache/chat/*");
         }
     }
 
