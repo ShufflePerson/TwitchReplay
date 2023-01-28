@@ -53,8 +53,10 @@ namespace clipper {
         }
 
 
-        fs.mkdirSync("./cache");
-        fs.mkdirSync("./cache/buffer");
+        if(!fs.existsSync("./cache"))
+            fs.mkdirSync("./cache");
+        if(!fs.existsSync("./cache/buffer"))
+            fs.mkdirSync("./cache/buffer");
 
         logger.info("Folders initialized");
     }
@@ -158,6 +160,7 @@ namespace clipper {
     }
 
 
+
     export function clip(time_s: number): Promise<boolean> {
         return new Promise(async (resolve, reject) => {
             await wait_for_buffer();
@@ -199,6 +202,7 @@ namespace clipper {
                     logger.info("Clip written");
                     resolve(true);
                 })
+
 
 
 
