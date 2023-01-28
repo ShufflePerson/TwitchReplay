@@ -18,11 +18,10 @@ namespace ui_chat {
 
     let driver_build = new Builder()
         .forBrowser('chrome')
-        .setChromeOptions(new Options().windowSize({ width: 380, height: 730}))
+        .setChromeOptions(new Options().windowSize({ width: 400, height: 430}))
     let driver: WebDriver;
 
     let log = logging.get_logger();
-    let interval_for_frame = 1000;
     let screenshot_interval: NodeJS.Timeout;
     let frames_done: number = 0;
 
@@ -47,23 +46,13 @@ namespace ui_chat {
         
         await driver.get(`http://localhost:${get_config().serverPort}/chat/chat.html`);
 
-        let current_numb: number = 0;
-        
-        screenshot_interval = setInterval(async () => {
-            let screenshot = await driver.takeScreenshot();
-            for (let i = 0; i < 25; i++) {
-                writeFileSync(`./cache/chat/${current_numb++}.png`, screenshot, 'base64');
-            }
-            frames_done++;
-        }, interval_for_frame)
-
-        setTimeout(() => {
-            convert_to_video();
-        }, 10000);
-
         log.info("Chat's Frontend Initialized");
     }
 
+    export async function take_frame() {
+        let screenshot = await driver.takeScreenshot();
+        writeFileSync(`./cache/chat/${frames_done++}.png`, screenshot, 'base64');
+    }
     export async function convert_to_video(): Promise<string> {
 
         return new Promise(async (resolve, reject) => {
@@ -71,8 +60,6 @@ namespace ui_chat {
             clearInterval(screenshot_interval)
             await driver.quit();
             let file_name: string = `chat-${Date.now()}.${get_config().videoFormat}`;
-
-            //take all the images and convert them to a video in the same format as ${get_config().targetDirectory}
 
             ffmpeg()
                 .addOptions([
@@ -84,7 +71,6 @@ namespace ui_chat {
                 })
                 .on('end', async () => {
                     await initlize();
-
 
                     log.info("Chat converted to video")
                     resolve(file_name);
