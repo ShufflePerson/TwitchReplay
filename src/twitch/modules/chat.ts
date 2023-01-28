@@ -58,6 +58,10 @@ namespace chat {
                             return badge.split("/")[0];
                         });
 
+                        if (!chat_message) {
+                            return logger.warning("Chat message parsing failed. Raw: " + str_data);
+                        }
+
                         let parsed_message: t_message = {
                             sender: str_data.split("display-name=")[1].split(";")[0],
                             emote_ids: emote_ids,
@@ -107,15 +111,17 @@ namespace chat {
             let streamer_name = globals.channel_name; 
 
             let file_data = `#Session ID: ${session_id}\n#Stream Title: ${stream_title}\n#Streamer Name: ${streamer_name}\n\n`;
-            file_data += `#Time,Sender,Message,Emotes,EmoteIDs,Badges\n`;
+            file_data += `#Time,Sender,Message,Emotes,EmoteIDs,Badges,UUID\n`;
 
             writeFileSync(`./cache/chat/${session_id}.txt`, file_data);
         } else {
-            let file_data = `${current_date.getHours()}:${current_date.getMinutes()}:${current_date.getSeconds()},${message.sender},${message.message},${message.emote_names},${message.emote_ids},${message.badge_names}\n`;
+            let file_data = `${current_date.getHours()}:${current_date.getMinutes()}:${current_date.getSeconds()},${message.sender},${message.message},${message.emote_names},${message.emote_ids},${message.badge_names},${randomUUID()}\n`;
             appendFileSync(`./cache/chat/${session_id}.txt`, file_data, {flag: "a"});
         }
 
 
+
+        return;
         let words = message.message.split(" ");
         words = words.filter((word) => {
             return !message.emote_names.includes(word);
