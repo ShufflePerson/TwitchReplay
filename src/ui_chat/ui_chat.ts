@@ -10,6 +10,10 @@ import is_linux from '../utils/is_linux';
 import { execSync } from 'child_process';
 
 
+ffmpeg.setFfmpegPath("./ffmpeg/bin/ffmpeg.exe");
+ffmpeg.setFfprobePath("./ffmpeg/bin/ffprobe.exe");
+
+
 namespace ui_chat {
 
     let driver_build = new Builder()
@@ -19,6 +23,8 @@ namespace ui_chat {
 
     let log = logging.get_logger();
     let interval_for_frame = 1000;
+    let screenshot_interval: NodeJS.Timeout;
+    let frames_done: number = 0;
 
     function initlize_folders() {
         if(!existsSync("./cache")) {
@@ -28,19 +34,12 @@ namespace ui_chat {
         if(!existsSync("./cache/chat")) {
             log.info("Creating chat folder");
             mkdirSync("./cache/chat");
-        } else {
-            log.info("Deleting chat folder");
-            if (is_linux())
-                execSync("rm -rf ./cache/chat");
-            else
-                execSync("rmdir /s /q cache/chat");
-
-            initlize_folders();
         }
     }
 
     export async function initlize() {
         log.info("Initializing Chat's Frontend");
+        frames_done = 0;
 
         initlize_folders();
         
@@ -50,18 +49,53 @@ namespace ui_chat {
 
         let current_numb: number = 0;
         
-        setInterval(async () => {
+        screenshot_interval = setInterval(async () => {
             let screenshot = await driver.takeScreenshot();
-            writeFileSync(`./cache/chat/${current_numb++}.png`, screenshot, 'base64');
+            for (let i = 0; i < 25; i++) {
+                writeFileSync(`./cache/chat/${current_numb++}.png`, screenshot, 'base64');
+            }
+            frames_done++;
         }, interval_for_frame)
+
+        setTimeout(() => {
+            convert_to_video();
+        }, 10000);
 
         log.info("Chat's Frontend Initialized");
     }
 
-    export async function convert_to_video() {
-        log.info("Converting chat to video");
-        await driver.quit();
-        log.info("Chat converted to video");
+    export async function convert_to_video(): Promise<string> {
+
+        return new Promise(async (resolve, reject) => {
+            log.info("Converting chat to video");
+            clearInterval(screenshot_interval)
+            await driver.quit();
+            let file_name: string = `chat-${Date.now()}.${get_config().videoFormat}`;
+
+            //take all the images and convert them to a video in the same format as ${get_config().targetDirectory}
+
+            ffmpeg()
+                .addOptions([
+                    "-i ./cache/chat/%d.png"
+                ])
+                .output(`./cache/chat/${file_name}`)
+                .on('start', (commandLine) => {
+                    log.debug(commandLine);
+                })
+                .on('end', async () => {
+                    await initlize();
+
+
+                    log.info("Chat converted to video")
+                    resolve(file_name);
+                })
+                .on('error', (err) => {
+                    log.error(err);
+                    reject(err);
+                }).run();
+            
+            log.info("Chat converted to video");
+        });
     }
     
 }
