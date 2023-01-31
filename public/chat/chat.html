@@ -76,6 +76,7 @@
     }
 
     function fill_test_chat() {
+
         let chat = document.getElementById("chat");
         for (let i = 0; i < 100; i++) {
             setTimeout(() => {
@@ -85,17 +86,24 @@
                 chat.scrollTop = chat.scrollHeight;
 
                 let message = chat.lastChild;
-
-                setInterval(() => {
-                    if (is_out_of_view(message))
-                        chat.removeChild(message);
-                }, 100);
             }, i * 100);
         }
     }
 
+    function add_chat_message(message) {
+        let chat = document.getElementById("chat");
+        chat.appendChild(get_chat_message(message.badges, message));
+        chat.scrollTop = chat.scrollHeight;
+    }
+
+
     document.addEventListener("DOMContentLoaded", () => {
-        fill_test_chat();
+        setInterval(() => {
+            if (is_out_of_view(document.getElementById("chat").lastChild)) {
+                document.getElementById("chat").removeChild(document.getElementById("chat").firstChild);
+            }
+        }, 100);
+        //fill_test_chat();
     });
 
 
@@ -114,13 +122,15 @@
 
     body {
         font-family: 'Inter', sans-serif;
+        background-color: red;
+        overflow: hidden;
     }
 
     .chat {
         width: 400px;
         height: 430px;
-        background-color: rgb(0, 0, 0);
         color: white;
+        overflow: hidden;
         padding: 20px;
         overflow: hidden;
         display: flex;
