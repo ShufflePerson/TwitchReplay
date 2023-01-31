@@ -1,12 +1,157 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat</title>
 </head>
+
 <body>
-    <h1>hi</h1>
+    <div id="chat" class="chat">
+
+    </div>
 </body>
+
 </html>
+
+
+<script>
+
+    let test_message = {
+        text: "OMEGALUL good one",
+        username: "testuser",
+        color: "#8FCFCF",
+        emotes: {
+            OMEGALUL: "https://cdn.frankerfacez.com/emoticon/128054/2"
+        },
+        badges: ["https://static-cdn.jtvnw.net/badges/v1/affddbd9-df5d-4c55-935f-d75767585ee9/2"]
+    }
+
+    function get_chat_message(badges, message) {
+        let message_div = document.createElement("div");
+        message_div.classList.add("chat_message");
+
+        let badges_div = document.createElement("div");
+        badges_div.classList.add("badges");
+
+        for (let i = 0; i < badges.length; i++) {
+            let badge = document.createElement("img");
+            badge.src = badges[i];
+            badges_div.appendChild(badge);
+        }
+
+        let username_p = document.createElement("p");
+        username_p.classList.add("username");
+        username_p.style.color = message.color;
+        username_p.innerText = message.username + ":  ";
+
+        let text_p = document.createElement("p");
+        text_p.classList.add("msg");
+
+        let message_text = message.text;
+        let emotes = message.emotes;
+
+        for (let emote in emotes) {
+            let emote_regex = new RegExp(emote, "g");
+            message_text = message_text.replace(emote_regex, `<img src="${emotes[emote]}" />`);
+        }
+
+        text_p.innerHTML = message_text;
+
+        message_div.appendChild(badges_div);
+        message_div.appendChild(username_p);
+        message_div.appendChild(text_p);
+
+        return message_div;
+
+
+    }
+
+    function is_out_of_view(elm) {
+        let rect = elm.getBoundingClientRect();
+        let view_height = Math.max(document.documentElement.clientHeight, window.innerHeight);
+        return !(rect.bottom >= 0 && rect.top <= view_height);
+    }
+
+    function fill_test_chat() {
+        let chat = document.getElementById("chat");
+        for (let i = 0; i < 100; i++) {
+            setTimeout(() => {
+                chat.appendChild(get_chat_message(test_message.badges, test_message));
+                test_message.text = "OMEGALUL good one " + i;
+                test_message.username = "testuser" + i;
+                chat.scrollTop = chat.scrollHeight;
+
+                let message = chat.lastChild;
+
+                setInterval(() => {
+                    if (is_out_of_view(message))
+                        chat.removeChild(message);
+                }, 100);
+            }, i * 100);
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        fill_test_chat();
+    });
+
+
+</script>
+
+
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&');
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+    }
+
+    .chat {
+        width: 400px;
+        height: 430px;
+        background-color: rgb(0, 0, 0);
+        color: white;
+        padding: 20px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .chat_message {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .msg {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .username,
+    .msg {
+        font-size: 12px;
+    }
+
+    .msg>img {
+        width: 20px;
+        height: 20px;
+    }
+
+    .badges>img {
+        width: 15px;
+        height: 15px;
+    }
+</style>
