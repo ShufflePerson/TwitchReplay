@@ -8,6 +8,7 @@ import get_config from '../utils/get_config';
 import ffmpeg from 'fluent-ffmpeg';
 import is_linux from '../utils/is_linux';
 import { execSync } from 'child_process';
+import { t_chat_ui_message } from '../types/t_chat_ui_message';
 
 
 ffmpeg.setFfmpegPath("./ffmpeg/bin/ffmpeg.exe");
@@ -41,6 +42,11 @@ namespace ui_chat {
         }
     }
 
+    function get_add_chat_message_script(message: t_chat_ui_message): string {
+        let message_string = JSON.stringify(message);
+        return `add_chat_message(${message_string})`;
+    }
+
     export async function initlize() {
         log.info("Initializing Chat's Frontend");
         frames_done = 0;
@@ -51,7 +57,19 @@ namespace ui_chat {
 
         await driver.get(`http://localhost:${get_config().serverPort}/chat/chat.html`);
 
-        take_frame()
+
+        setInterval(() => {
+            take_frame()
+            driver.executeScript(get_add_chat_message_script({
+                text: "OMEGALUL so true OMEGALUL",
+                username: "Arthium",
+                color: "#000000",
+                emotes: {
+                    OMEGALUL: "https://cdn.frankerfacez.com/emoticon/128054/2"
+                },
+                badges: ["https://static-cdn.jtvnw.net/badges/v1/affddbd9-df5d-4c55-935f-d75767585ee9/2"]
+            }));
+        }, 1000)
 
         log.info("Chat's Frontend Initialized");
     }
