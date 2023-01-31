@@ -83,7 +83,6 @@ namespace ui_chat {
         return new Promise(async (resolve, reject) => {
             log.info("Converting chat to video");
             clearInterval(screenshot_interval)
-            await driver.quit();
             let file_name: string = `chat-${Date.now()}.${get_config().videoFormat}`;
 
             ffmpeg()
@@ -95,8 +94,6 @@ namespace ui_chat {
                     log.debug(commandLine);
                 })
                 .on('end', async () => {
-                    await initlize();
-
                     log.info("Chat converted to video")
                     resolve(file_name);
                 })
