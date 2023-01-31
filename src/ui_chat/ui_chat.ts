@@ -18,7 +18,7 @@ namespace ui_chat {
 
     let driver_build = new Builder()
         .forBrowser('chrome')
-        .setChromeOptions(new Options().windowSize({ width: 400, height: 430}))
+        .setChromeOptions(new Options().windowSize({ width: 430, height: 520 }))
     let driver: WebDriver;
 
     let log = logging.get_logger();
@@ -26,18 +26,18 @@ namespace ui_chat {
     let frames_done: number = 0;
 
     function initlize_folders() {
-        if(!existsSync("./cache")) {
+        if (!existsSync("./cache")) {
             log.info("Creating cache folder");
             mkdirSync("./cache");
         }
-        if(!existsSync("./cache/chat")) {
+        if (!existsSync("./cache/chat")) {
             log.info("Creating chat folder");
             mkdirSync("./cache/chat");
         } else {
             if (is_linux())
                 execSync("rm -rf ./cache/chat/*");
             else
-                execSync("del /s /q cache/chat/*");
+                execSync("del /s /q cache\\chat\\*");
         }
     }
 
@@ -46,10 +46,12 @@ namespace ui_chat {
         frames_done = 0;
 
         initlize_folders();
-        
+
         driver = (await driver_build.build());
-        
+
         await driver.get(`http://localhost:${get_config().serverPort}/chat/chat.html`);
+
+        take_frame()
 
         log.info("Chat's Frontend Initialized");
     }
@@ -84,11 +86,11 @@ namespace ui_chat {
                     log.error(err);
                     reject(err);
                 }).run();
-            
+
             log.info("Chat converted to video");
         });
     }
-    
+
 }
 
 export default ui_chat;
