@@ -26,7 +26,7 @@ namespace ui_chat {
 
     let driver_build = new Builder()
         .forBrowser('chrome')
-        .setChromeOptions(new Options().addArguments(`--disable-infobars --disable-gpu --app=http://localhost:${get_config().serverPort}/chat/chat.html`).windowSize({ width: 430, height: 520 }))
+        .setChromeOptions(new Options().addArguments(`--disable-infobars --disable-gpu --app=http://localhost:${get_config().serverPort}/chat/chat.html`).windowSize({ width: 630, height: 620 }))
     let driver: WebDriver;
 
     let log = logging.get_logger();
@@ -95,18 +95,18 @@ namespace ui_chat {
         driver = (await driver_build.build());
 
 
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 100; i++) {
             driver.executeScript(get_add_chat_message_script({
-                text: "OMEGALUL so true OMEGALUL",
+                text: "OMEGALUL so true " + i.toString() + " OMEGALUL",
                 username: "Arthium",
-                color: "#000000",
+                color: "#1111EE",
                 emotes: {
                     OMEGALUL: "https://cdn.frankerfacez.com/emoticon/128054/2"
                 },
                 badges: ["https://static-cdn.jtvnw.net/badges/v1/affddbd9-df5d-4c55-935f-d75767585ee9/2"]
             }))
 
-            await delay(100);
+            await delay(10);
             await take_frame()
 
 
@@ -114,7 +114,7 @@ namespace ui_chat {
 
 
         await driver.quit();
-        await convert_to_video("./clips/monstercat_1674859127447.mkv");
+        await convert_to_video("./clips/xqc_1674906587400.mkv");
 
         log.info("Chat's Frontend Initialized");
     }
