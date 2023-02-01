@@ -181,7 +181,9 @@ namespace ui_chat {
                 .addOptions([
                     "-r", "1",
                     "-framerate", "1",
-                    "-i ./cache/chat/%d.png"
+                    "-i ./cache/chat/%d.png",
+                    "-c:v", "png",
+                    "-pix_fmt", "rgba",
                 ])
                 .output(`./cache/chat/${file_name}`)
                 .on('start', (commandLine) => {
