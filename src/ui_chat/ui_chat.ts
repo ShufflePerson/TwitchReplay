@@ -13,6 +13,7 @@ import http from 'http';
 import sharp from 'sharp';
 import { resolve } from 'path';
 import in_tolerence from '../math/in_tolerence';
+import { video } from '../video/video';
 
 
 ffmpeg.setFfmpegPath("./ffmpeg/bin/ffmpeg.exe");
@@ -53,7 +54,7 @@ namespace ui_chat {
         return `add_chat_message(${message_string})`;
     }
 
-    function make_transparent(image: string): Promise<string> {
+    function make_transparent(image: string, template_color: number = 154): Promise<string> {
         return new Promise(async (resolve, reject) => {
             let image_buffer = Buffer.from(image, 'base64');
             let image_sharp = sharp(image_buffer);
@@ -61,7 +62,6 @@ namespace ui_chat {
             let image_data = await image_sharp.raw().toBuffer();
             let image_data_array = new Uint8ClampedArray(image_data);
 
-            let template_color = 154;
             let template_color_tolerance = 5;
 
             for (let i = 0; i < image_data_array.length; i += 4) {
@@ -170,35 +170,10 @@ namespace ui_chat {
         log.debug(`Took frame ${frames_done - 1}`);
     }
 
-    export async function convert_to_video(): Promise<string> {
+    export async function convert_to_video() {
+        let file_name: string = `./cache/chat/chat-${Date.now()}.${get_config().videoFormat}`;
 
-        return new Promise(async (resolve, reject) => {
-            log.info("Converting chat to video");
-            clearInterval(screenshot_interval)
-            let file_name: string = `chat-${Date.now()}.${get_config().videoFormat}`;
-
-            ffmpeg()
-                .addOptions([
-                    "-r", "1",
-                    "-framerate", "1",
-                    "-i ./cache/chat/%d.png",
-                    "-c:v", "png",
-                    "-pix_fmt", "rgba",
-                ])
-                .output(`./cache/chat/${file_name}`)
-                .on('start', (commandLine) => {
-                    log.debug(commandLine);
-                })
-                .on('end', async () => {
-                    log.info("Chat converted to video")
-                    resolve(file_name);
-                })
-                .on('error', (err) => {
-                    log.error(err);
-                    reject(err);
-                }).run();
-
-        });
+        return video.images_to_video("./cache/chat/%d.png", file_name, "1");
     }
 
 }
