@@ -4,6 +4,7 @@
     "@types/express": "^4.17.16",
     "@types/hh-mm-ss": "^1.2.1",
     "@types/node": "^18.11.18",
+    "@types/sharp": "^0.31.1",
     "@types/ws": "^8.5.4",
     "axios": "^1.2.3",
     "cli-spinners": "^2.7.0",
@@ -20,6 +21,7 @@
     "request": "^2.88.2",
     "selenium": "^2.20.0",
     "selenium-webdriver": "^4.8.0",
+    "sharp": "^0.31.3",
     "ts-node": "^10.9.1",
     "ts-transformer-keys": "^0.4.4",
     "ws": "^8.12.0"
