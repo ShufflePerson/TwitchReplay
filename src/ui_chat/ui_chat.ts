@@ -54,7 +54,11 @@ namespace ui_chat {
         return `add_chat_message(${message_string})`;
     }
 
-    function make_transparent(image: string, template_color: number = 154): Promise<string> {
+    function make_transparent(image: string, template_color = {
+        r: 154,
+        g: 154,
+        b: 154
+    }): Promise<string> {
         return new Promise(async (resolve, reject) => {
             let image_buffer = Buffer.from(image, 'base64');
             let image_sharp = sharp(image_buffer);
@@ -62,10 +66,10 @@ namespace ui_chat {
             let image_data = await image_sharp.raw().toBuffer();
             let image_data_array = new Uint8ClampedArray(image_data);
 
-            let template_color_tolerance = 5;
+            let template_color_tolerance = 2;
 
             for (let i = 0; i < image_data_array.length; i += 4) {
-                if (in_tolerence(image_data_array[i], template_color, template_color_tolerance) && in_tolerence(image_data_array[i + 1], template_color, template_color_tolerance) && in_tolerence(image_data_array[i + 2], template_color, template_color_tolerance))
+                if (in_tolerence(image_data_array[i], template_color.r, template_color_tolerance) && in_tolerence(image_data_array[i + 1], template_color.g, template_color_tolerance) && in_tolerence(image_data_array[i + 2], template_color.b, template_color_tolerance))
                     image_data_array[i + 3] = 0;
             }
             let image_sharp_transparent = sharp(image_data_array, {
@@ -110,7 +114,7 @@ namespace ui_chat {
 
 
         await driver.quit();
-        await convert_to_video();
+        await convert_to_video("./clips/monstercat_1674859127447.mkv");
 
         log.info("Chat's Frontend Initialized");
     }
@@ -170,10 +174,12 @@ namespace ui_chat {
         log.debug(`Took frame ${frames_done - 1}`);
     }
 
-    export async function convert_to_video() {
+    export async function convert_to_video(clip: string) {
         let file_name: string = `./cache/chat/chat-${Date.now()}.${get_config().videoFormat}`;
 
-        return video.images_to_video("./cache/chat/%d.png", file_name, "1");
+        await video.images_to_video("./cache/chat/%d.png", file_name, "1");
+
+        return video.combine_videos(file_name, clip, clip)
     }
 
 }
