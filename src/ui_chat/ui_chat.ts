@@ -178,8 +178,9 @@ namespace ui_chat {
         let file_name: string = `./cache/chat/chat-${Date.now()}.${get_config().videoFormat}`;
 
         await video.images_to_video("./cache/chat/%d.png", file_name, "1");
+        let output = "." + clip.split('.')[1] + "-chat." + clip.split('.')[2];
 
-        return video.combine_videos(file_name, clip, clip)
+        return video.combine_videos(file_name, clip, output)
     }
 
 }
