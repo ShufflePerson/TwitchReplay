@@ -9,8 +9,8 @@
 </head>
 
 <body>
-    <div id="chat" class="chat">
-
+    <div class="chat_wrapper">
+        <div id="chat" class="chat"></div>
     </div>
 </body>
 
@@ -111,8 +111,6 @@
 
 
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&');
-
     * {
         margin: 0;
         padding: 0;
@@ -127,18 +125,20 @@
         background-color: rgb(154, 154, 154);
     }
 
-    .chat {
-        background-color: rgb(154, 154, 154);
-        width: 400px;
-        height: 430px;
-        color: white;
-        overflow: hidden;
+    .chat_wrapper {
         padding: 20px;
         overflow: hidden;
+        background-color: rgb(154, 154, 154);
+        color: rgba(255, 255, 255, 0.836);
+    }
+
+    .chat {
         display: flex;
         flex-direction: column;
         gap: 10px;
+        max-height: 470px;
     }
+
 
     .chat_message {
         display: flex;
@@ -158,12 +158,10 @@
     }
 
     .msg>img {
-        width: 20px;
-        height: 20px;
+        width: 35px;
     }
 
     .badges>img {
-        width: 15px;
-        height: 15px;
+        width: 25px;
     }
 </style>
