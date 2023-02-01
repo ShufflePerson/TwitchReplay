@@ -10,6 +10,9 @@ import is_linux from '../utils/is_linux';
 import { execSync } from 'child_process';
 import { t_chat_ui_message } from '../types/t_chat_ui_message';
 import http from 'http';
+import sharp from 'sharp';
+import { resolve } from 'path';
+import in_tolerence from '../math/in_tolerence';
 
 
 ffmpeg.setFfmpegPath("./ffmpeg/bin/ffmpeg.exe");
@@ -50,6 +53,35 @@ namespace ui_chat {
         return `add_chat_message(${message_string})`;
     }
 
+    function make_transparent(image: string): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            let image_buffer = Buffer.from(image, 'base64');
+            let image_sharp = sharp(image_buffer);
+            let metadata = await image_sharp.metadata();
+            let image_data = await image_sharp.raw().toBuffer();
+            let image_data_array = new Uint8ClampedArray(image_data);
+
+            let template_color = 154;
+            let template_color_tolerance = 5;
+
+            for (let i = 0; i < image_data_array.length; i += 4) {
+                if (in_tolerence(image_data_array[i], template_color, template_color_tolerance) && in_tolerence(image_data_array[i + 1], template_color, template_color_tolerance) && in_tolerence(image_data_array[i + 2], template_color, template_color_tolerance))
+                    image_data_array[i + 3] = 0;
+            }
+            let image_sharp_transparent = sharp(image_data_array, {
+                raw: {
+                    width: metadata.width,
+                    height: metadata.height,
+                    channels: 4
+                }
+            });
+
+            image = (await image_sharp_transparent.png().toBuffer()).toString('base64');
+
+            resolve(image);
+        })
+    }
+
     export async function initlize() {
         log.info("Initializing Chat's Frontend");
         frames_done = 0;
@@ -57,12 +89,6 @@ namespace ui_chat {
         initlize_folders();
 
         driver = (await driver_build.build());
-
-
-        await send_chromedriver("Emulation.setDefaultBackgroundColorOverride", {
-            color: { r: 0, g: 0, b: 0, a: 0 }
-        })
-
 
 
         for (let i = 0; i < 10; i++) {
@@ -76,7 +102,7 @@ namespace ui_chat {
                 badges: ["https://static-cdn.jtvnw.net/badges/v1/affddbd9-df5d-4c55-935f-d75767585ee9/2"]
             }))
 
-            await delay(300);
+            await delay(100);
             await take_frame()
 
 
@@ -138,7 +164,10 @@ namespace ui_chat {
 
     export async function take_frame() {
         let screenshot = await driver.takeScreenshot();
+        screenshot = await make_transparent(screenshot);
         writeFileSync(`./cache/chat/${frames_done++}.png`, screenshot, 'base64');
+
+        log.debug(`Took frame ${frames_done - 1}`);
     }
 
     export async function convert_to_video(): Promise<string> {
