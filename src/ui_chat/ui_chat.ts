@@ -89,7 +89,7 @@ namespace ui_chat {
 
     export async function test_chat() {
         for (let i = 0; i < 100; i++) {
-            page.evaluate(get_add_chat_message_script({
+            add_chat_message({
                 text: "OMEGALUL so true " + i.toString() + " OMEGALUL",
                 username: "Arthium",
                 color: "#1111EE",
@@ -97,7 +97,7 @@ namespace ui_chat {
                     OMEGALUL: "https://cdn.frankerfacez.com/emoticon/128054/2"
                 },
                 badges: ["https://static-cdn.jtvnw.net/badges/v1/affddbd9-df5d-4c55-935f-d75767585ee9/2"]
-            }))
+            })
 
 
             await take_frame()
