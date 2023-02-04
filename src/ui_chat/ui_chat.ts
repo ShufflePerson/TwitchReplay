@@ -79,6 +79,11 @@ namespace ui_chat {
 
 
 
+
+        log.info("Chat's Frontend Initialized");
+    }
+
+    export async function test_chat() {
         for (let i = 0; i < 100; i++) {
             page.evaluate(get_add_chat_message_script({
                 text: "OMEGALUL so true " + i.toString() + " OMEGALUL",
@@ -98,8 +103,6 @@ namespace ui_chat {
 
         await browser.close();
         await convert_to_video("./clips/xqc_1674906587400.mkv");
-
-        log.info("Chat's Frontend Initialized");
     }
 
 
