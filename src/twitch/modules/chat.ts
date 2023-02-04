@@ -1,7 +1,8 @@
 import { randomUUID } from 'crypto';
-import { appendFileSync, existsSync, mkdirSync, writeFileSync } from 'fs';
+import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 import ws from 'ws';
 import { t_message } from '../../types/t_message';
+import { t_saved_chat } from '../../types/t_saved_chat';
 import { t_seventv_emote } from '../../types/t_seventv_emote';
 import logging from './../../logging/logging';
 import globals from './../globals';
@@ -14,6 +15,11 @@ namespace chat {
     let logger = logging.get_logger().withContext("chat");
     let socket: ws;
     let session_id: string = "";
+    let saved_chat: t_saved_chat = {
+        channel_name: globals.channel_name,
+        title: "",
+        messages: []
+    };
 
 
     export function initlize(): Promise<boolean> {
@@ -21,7 +27,14 @@ namespace chat {
 
             logger.info("Initializing chat");
             initlize_folder();
-            session_id = randomUUID(); 
+            session_id = randomUUID();
+
+            saved_chat.channel_name = globals.channel_name;
+            saved_chat.title = await client.get_stream_title();
+            saved_chat.messages = [];
+
+            let channel_emotes = await seventv.get_channel_emotes(globals.channel_id.toString());
+            let global_emotes = await seventv.get_global_emotes();
 
             try {
                 socket = new ws("wss://irc-ws.chat.twitch.tv:443");
@@ -64,15 +77,19 @@ namespace chat {
 
                         let parsed_message: t_message = {
                             sender: str_data.split("display-name=")[1].split(";")[0],
-                            emote_ids: emote_ids,
-                            emote_names: emote_names,
-                            badge_names: badge_names,
-                            message: chat_message.replace(/(\r\n|\n|\r)/gm, "")
+                            message: chat_message.replace(/(\r\n|\n|\r)/gm, ""),
+                            emotes: [],
+                            badges: [],
+                            color: str_data.split("color=")[1].split(";")[0],
+                            time: Date.now()
+
                         }
 
                         handle_chat_message(parsed_message);
-                        
 
+
+
+                        save_chat();
                     }
                 });
 
@@ -89,52 +106,93 @@ namespace chat {
             }
         })
     }
-    
+
     async function initlize_folder() {
         logger.info("Initializing Chat Folders")
         if (!existsSync("./cache"))
             mkdirSync("./cache");
-        if(!existsSync("./cache/chat")) 
+        if (!existsSync("./cache/chat"))
             mkdirSync("./cache/chat");
 
-        let channel_emotes = await seventv.get_channel_emotes(globals.channel_id.toString());
-        let global_emotes = await seventv.get_global_emotes();
         logger.info("Chat Folders Initialized")
     }
 
-    async function handle_chat_message(message: t_message) {
-        let current_date = new Date();
+    function handle_chat_message(message: t_message) {
+        saved_chat.messages.push(message);
+    }
+
+    function sanitize_message(message: t_message): t_message {
+        let sanitized_message = message;
+
+        sanitized_message.message = sanitized_message.message.replace(/\|/g, "I");
 
 
-        if(!existsSync(`./cache/chat/${session_id}.txt`)) {
-            let stream_title = await client.get_stream_title();
-            let streamer_name = globals.channel_name; 
+        return sanitized_message;
 
-            let file_data = `#Session ID: ${session_id}\n#Stream Title: ${stream_title}\n#Streamer Name: ${streamer_name}\n\n`;
-            file_data += `#Time,Sender,Message,Emotes,EmoteIDs,Badges,UUID\n`;
+    }
 
-            writeFileSync(`./cache/chat/${session_id}.txt`, file_data);
-        } else {
-            let file_data = `${current_date.getHours()}:${current_date.getMinutes()}:${current_date.getSeconds()},${message.sender},${message.message},${message.emote_names},${message.emote_ids},${message.badge_names},${randomUUID()}\n`;
-            appendFileSync(`./cache/chat/${session_id}.txt`, file_data, {flag: "a"});
+    export function save_chat() {
+        let data: string = "";
+
+        let messages = saved_chat.messages;
+        for (let i = 0; i < messages.length; i++) {
+            let message = messages[i];
+            message = sanitize_message(message);
+
+            data += `${message.sender}|${message.time}|${message.message}|${message.color}|${message.badges}|${message.emotes}`;
+            data += "\n";
         }
 
+        writeFileSync(`./cache/chat/${session_id}.chat`, data);
+    }
 
+    export function delete_chat_before(time: number) {
+        let messages = saved_chat.messages;
+        let new_messages: t_message[] = [];
 
-        return;
-        let words = message.message.split(" ");
-        words = words.filter((word) => {
-            return !message.emote_names.includes(word);
-        });
-
-        for (let word of words) {
-            let data: t_seventv_emote | null = await seventv.get_emote_by_name(word);
-            if (data != null) {
-                console.log(data);
+        for (let i = 0; i < messages.length; i++) {
+            let message = messages[i];
+            if (message.time > time) {
+                new_messages.push(message);
             }
         }
-        
 
+        saved_chat.messages = new_messages;
+
+        save_chat();
+
+    }
+
+
+    export function load_saved_chat(file_path: string): t_saved_chat {
+        let raw_message = readFileSync(file_path);
+        let raw_messages = raw_message.toString().split("\n");
+
+        let messages: t_message[] = [];
+
+        for (let i = 0; i < raw_messages.length; i++) {
+            let raw_message = raw_messages[i];
+            let message_parts = raw_message.split("|");
+
+            let message: t_message = {
+                sender: message_parts[0],
+                time: parseInt(message_parts[1]),
+                message: message_parts[2],
+                color: message_parts[3],
+                badges: [],
+                emotes: []
+            }
+
+            messages.push(message);
+        }
+
+        let saved_chat: t_saved_chat = {
+            channel_name: globals.channel_name,
+            title: "",
+            messages: messages
+        }
+
+        return saved_chat;
     }
 }
 
