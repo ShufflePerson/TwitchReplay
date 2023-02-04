@@ -19,12 +19,19 @@ import backend from './backend/backend';
 import ui_chat from './ui_chat/ui_chat';
 
 
+let logger = logging.get_logger().withContext("main");
 readline.emitKeypressEvents(process.stdin);
+
+function start_clearing_service() {
+    setInterval(() => {
+
+        chat.delete_chat_before(Date.now() - globals.buffer_size * 1000);
+    }, globals.buffer_size * 1000);
+}
 
 
 (async () => {
 
-    let logger = logging.get_logger().withContext("main");
 
     logging.init();
     backend.initlize();
@@ -35,7 +42,7 @@ readline.emitKeypressEvents(process.stdin);
         logger.error("Failed to initialize. Please check the log file for more information.");
         return;
     }
-    
+
 
 
 
@@ -45,12 +52,13 @@ readline.emitKeypressEvents(process.stdin);
     let stream_title: string = await client.get_stream_title();
 
     logging.get_logger().info(`Stream title: ${cap_text(stream_title)}`);
-    
+
     await clipper.initlize();
 
+    start_clearing_service();
 
     logger.info("Attempting to start capture");
-    
+
     let capture_started: boolean = await clipper.start_capture(false);
     if (!capture_started) {
         logger.error("Failed to start capture. Please check the log file for more information.");
