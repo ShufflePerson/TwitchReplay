@@ -16,6 +16,7 @@ import readline from 'readline';
 import clipper from './clipper/clipper';
 import chat from './twitch/modules/chat';
 import backend from './backend/backend';
+import ui_chat from './ui_chat/ui_chat';
 
 
 readline.emitKeypressEvents(process.stdin);
@@ -27,13 +28,15 @@ readline.emitKeypressEvents(process.stdin);
 
     logging.init();
     backend.initlize();
-
+    ui_chat.initlize();
 
     let twitch_init: boolean = await twitch.initlize();
     if (!twitch_init) {
         logger.error("Failed to initialize. Please check the log file for more information.");
         return;
     }
+    
+
 
 
     await client.get_device_id();
@@ -61,10 +64,13 @@ readline.emitKeypressEvents(process.stdin);
 
 
 
+
+/*
 process.on('exit', async () => {
-    clipper.clean_up();
+    //clippe.clean_up();
 });
 
 process.on('SIGINT', async () => {
-    clipper.clean_up();
+    //clipper.clean_up();
 });
+*/
