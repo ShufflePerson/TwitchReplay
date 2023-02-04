@@ -58,37 +58,6 @@ namespace ui_chat {
         return `add_chat_message(${message_string})`;
     }
 
-    function make_transparent(image: Buffer, template_color = {
-        r: 154,
-        g: 154,
-        b: 154
-    }): Promise<string> {
-        return new Promise(async (resolve, reject) => {
-            let image_sharp = sharp(image);
-            let metadata = await image_sharp.metadata();
-            let image_data = await image_sharp.raw().toBuffer();
-            let image_data_array = new Uint8ClampedArray(image_data);
-
-            let template_color_tolerance = 2;
-
-            for (let i = 0; i < image_data_array.length; i += 4) {
-                if (in_tolerence(image_data_array[i], template_color.r, template_color_tolerance) && in_tolerence(image_data_array[i + 1], template_color.g, template_color_tolerance) && in_tolerence(image_data_array[i + 2], template_color.b, template_color_tolerance))
-                    image_data_array[i + 3] = 0;
-            }
-            let image_sharp_transparent = sharp(image_data_array, {
-                raw: {
-                    width: metadata.width,
-                    height: metadata.height,
-                    channels: 4
-                }
-            });
-
-            let new_image = (await image_sharp_transparent.png().toBuffer()).toString('base64');
-
-            resolve(new_image);
-        })
-    }
-
     export async function initlize() {
         log.info("Initializing Chat's Frontend");
         frames_done = 0;
