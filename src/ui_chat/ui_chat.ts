@@ -16,6 +16,9 @@ import { video } from '../video/video';
 
 import puppeteer from 'puppeteer';
 import { Browser, Page } from 'puppeteer';
+import { t_message } from '../types/t_message';
+import get_message_chunks from '../utils/get_message_chunks';
+import message_to_ui_message from '../utils/message_to_ui_message';
 
 
 
@@ -109,26 +112,46 @@ namespace ui_chat {
         await convert_to_video("./clips/xqc_1674906587400.mkv");
     }
 
+    export async function convert_and_export(messages: t_message[], clip_path: string, clip_start: number, clip_end: number, messages_per_chunk: number = 20): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            let chunks: t_message[][] = get_message_chunks(messages, clip_start, clip_end, messages_per_chunk);
+
+            for (let i = 0; i < chunks.length; i++) {
+                for (let j = 0; j < chunks[i].length; j++) {
+                    let message = chunks[i][j];
+                    add_chat_message(message_to_ui_message(message));
+                }
+
+                await take_frame();
+            }
+
+            await browser.close();
+            initlize();
+
+            let saved_path: string = await convert_to_video(clip_path);
+            resolve(saved_path);
+        });
+    }
+
 
 
     export async function take_frame() {
         const elements = await page.$('body')
         let screenshot: string = (await elements.screenshot({ encoding: 'base64', omitBackground: true })) as string;
-        //let buffer_screenshot = Buffer.from(screenshot, 'base64');
-
-        //screenshot = await make_transparent(buffer_screenshot);
         writeFileSync(`./cache/chat/${frames_done++}.png`, screenshot, 'base64');
 
         log.debug(`Took frame ${frames_done - 1}`);
     }
 
-    export async function convert_to_video(clip: string) {
-        let file_name: string = `./cache/chat/chat-${Date.now()}.${get_config().videoFormat}`;
+    export async function convert_to_video(clip: string): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            let file_name: string = `./cache/chat/chat-${Date.now()}.${get_config().videoFormat}`;
 
-        await video.images_to_video("./cache/chat/%d.png", file_name, "1");
-        let output = "." + clip.split('.')[1] + "-chat." + clip.split('.')[2];
+            await video.images_to_video("./cache/chat/%d.png", file_name, "1");
+            let output = "." + clip.split('.')[1] + "-chat." + clip.split('.')[2];
 
-        return video.combine_videos(file_name, clip, output)
+            resolve(await video.combine_videos(file_name, clip, output))
+        })
     }
 
 }
