@@ -34,6 +34,9 @@ namespace ui_chat {
     let screenshot_interval: NodeJS.Timeout;
     let frames_done: number = 0;
 
+    let width = 630;
+    let height = 620;
+
     function initlize_folders() {
         if (!existsSync("./cache")) {
             log.info("Creating cache folder");
@@ -94,17 +97,14 @@ namespace ui_chat {
 
         let url = `http://localhost:${get_config().serverPort}/chat/chat.html`;
         browser = await puppeteer.launch({
-            headless: false,
+            headless: true,
             args: [
-                `--app=${url}`,
                 '--disable-infobars',
-                '--disable-gpu',
-                '--window-size=630,620'
             ]
         });
         page = await browser.newPage();
         await page.goto(url);
-        await page.setViewport({ width: 630, height: 620 });
+        await page.setViewport({ width, height });
         await page.evaluate(() => (document.body.style.background = 'transparent'))
 
 
@@ -122,7 +122,6 @@ namespace ui_chat {
             }))
 
 
-            await delay(10);
             await take_frame()
 
 
