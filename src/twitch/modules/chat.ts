@@ -15,7 +15,7 @@ namespace chat {
     let logger = logging.get_logger().withContext("chat");
     let socket: ws;
     let session_id: string = "";
-    let saved_chat: t_saved_chat = {
+    export let saved_chat: t_saved_chat = {
         channel_name: globals.channel_name,
         title: "",
         messages: []
@@ -89,7 +89,6 @@ namespace chat {
 
 
 
-                        save_chat();
                     }
                 });
 
@@ -158,8 +157,6 @@ namespace chat {
         }
 
         saved_chat.messages = new_messages;
-
-        save_chat();
 
     }
 
