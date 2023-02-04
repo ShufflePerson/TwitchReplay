@@ -83,6 +83,10 @@ namespace ui_chat {
         log.info("Chat's Frontend Initialized");
     }
 
+    function add_chat_message(message: t_chat_ui_message) {
+        page.evaluate(get_add_chat_message_script(message));
+    }
+
     export async function test_chat() {
         for (let i = 0; i < 100; i++) {
             page.evaluate(get_add_chat_message_script({
@@ -104,6 +108,7 @@ namespace ui_chat {
         await browser.close();
         await convert_to_video("./clips/xqc_1674906587400.mkv");
     }
+
 
 
     export async function take_frame() {
