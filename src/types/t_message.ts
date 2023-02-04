@@ -1,9 +1,12 @@
+import { t_asset } from "./t_asset";
+
 interface t_message {
     sender: string;
-    emote_ids: string[];
-    emote_names: string[];
-    badge_names: string[];
     message: string;
+    time: number;
+    color: string;
+    emotes: t_asset[];
+    badges: t_asset[];
 }
 
 export { t_message }
