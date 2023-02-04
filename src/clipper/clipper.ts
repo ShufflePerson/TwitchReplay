@@ -44,7 +44,7 @@ namespace clipper {
             if (is_linux())
                 execSync("rm -rf ./cache/buffer");
             else
-                execSync("rmdir /s /q cache/buffer");
+                execSync("rmdir /s /q cache\\buffer");
         }
 
 
@@ -53,9 +53,9 @@ namespace clipper {
         }
 
 
-        if(!fs.existsSync("./cache"))
+        if (!fs.existsSync("./cache"))
             fs.mkdirSync("./cache");
-        if(!fs.existsSync("./cache/buffer"))
+        if (!fs.existsSync("./cache/buffer"))
             fs.mkdirSync("./cache/buffer");
 
         logger.info("Folders initialized");
@@ -150,7 +150,7 @@ namespace clipper {
             resolve(true);
         })
     }
-    
+
     function wait_for_buffer() {
         return new Promise(async (resolve, reject) => {
             setTimeout(() => {
@@ -189,7 +189,7 @@ namespace clipper {
 
             command.addOption("-threads", "0");
             command.addOption("-preset", "ultrafast");
-            
+
 
             command.mergeToFile(output_name)
                 .on("start", function (command_line) {
