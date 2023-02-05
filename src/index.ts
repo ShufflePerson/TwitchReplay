@@ -69,7 +69,7 @@ function start_clearing_service() {
         logger.info("Exporting clip");
         let clip_start = Date.now() - globals.buffer_size * 1000;
         let clip_end = Date.now();
-        let exported_path: string = await ui_chat.convert_and_export(chat.saved_chat.messages, "./clips/xqc_1674820276025.mkv", clip_start, clip_end);
+        let exported_path: string = await ui_chat.convert_and_export(chat.saved_chat.messages, await clipper.clip(10), clip_start, clip_end);
         logger.info(`Exported clip to ${exported_path}`)
     }, globals.buffer_size * 1100);
 
