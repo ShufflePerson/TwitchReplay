@@ -53,11 +53,17 @@ namespace backend {
             const { duration } = req.body;
             let current_clips = readdirSync(get_config().targetDirectory);
 
-            await clipper.clip(duration * 60)
+            let saved_path = await clipper.clip(duration * 60)
+            if (!saved_path)
+                log.error("Failed to clip the stream.");
+            else
+                log.info("Clip saved to: " + saved_path);
+
+
 
             let new_clip = readdirSync(get_config().targetDirectory).filter(clip => !current_clips.includes(clip))[0];
 
-            res.send({ clips:  [new_clip]});
+            res.send({ clips: [new_clip] });
         });
 
 
