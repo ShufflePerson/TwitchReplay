@@ -161,7 +161,7 @@ namespace clipper {
 
 
 
-    export function clip(time_s: number): Promise<boolean> {
+    export function clip(time_s: number = globals.buffer_size): Promise<string> {
         return new Promise(async (resolve, reject) => {
             await wait_for_buffer();
 
@@ -197,10 +197,10 @@ namespace clipper {
                     logger.debug(command_line);
                 }).on("error", function (err) {
                     logger.error("An error occurred: " + err.message)
-                    resolve(false);
+                    resolve("");
                 }).on("end", function () {
                     logger.info("Clip written");
-                    resolve(true);
+                    resolve(output_name);
                 })
 
 
