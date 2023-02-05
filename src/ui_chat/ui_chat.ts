@@ -124,12 +124,14 @@ namespace ui_chat {
 
                 await take_frame();
             }
+            
+            
+            let saved_path: string = await convert_to_video(clip_path);
+            resolve(saved_path);
 
             await browser.close();
             initlize();
 
-            let saved_path: string = await convert_to_video(clip_path);
-            resolve(saved_path);
         });
     }
 
