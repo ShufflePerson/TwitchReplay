@@ -112,9 +112,9 @@ namespace ui_chat {
         await convert_to_video("./clips/xqc_1674906587400.mkv");
     }
 
-    export async function convert_and_export(messages: t_message[], clip_path: string, clip_start: number, clip_end: number, messages_per_chunk: number = 20): Promise<string> {
+    export async function convert_and_export(messages: t_message[], clip_path: string, clip_start: number, clip_end: number): Promise<string> {
         return new Promise(async (resolve, reject) => {
-            let chunks: t_message[][] = get_message_chunks(messages, clip_start, clip_end, messages_per_chunk);
+            let chunks: t_message[][] = get_message_chunks(messages, clip_start, clip_end);
 
             for (let i = 0; i < chunks.length; i++) {
                 for (let j = 0; j < chunks[i].length; j++) {
