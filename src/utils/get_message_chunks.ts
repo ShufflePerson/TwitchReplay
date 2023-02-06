@@ -1,24 +1,32 @@
 import { t_message } from "../types/t_message";
 
 
+export default function get_message_chunks(messages: t_message[], clip_start: number, clip_end: number): t_message[][] {
+    const chunks: t_message[][] = [];
+    let chunk: t_message[] = [];
+    let chunk_start = clip_start;
 
-export default ((messages: t_message[], clip_start: number, clip_end: number, messages_per_chunk: number = 5): t_message[][] => {
-    let chunks: t_message[][] = [];
-    let current_chunk: t_message[] = [];
-
-    for (let i = 0; i < messages.length; i++) {
-        if (messages[i].time < clip_start || messages[i].time > clip_end)
+    for (const message of messages) {
+        if (message.time < clip_start || message.time > clip_end) {
             continue;
-        if (current_chunk.length >= messages_per_chunk) {
-            chunks.push(current_chunk);
-            current_chunk = [];
         }
-        current_chunk.push(messages[i]);
+
+        if (message.time > chunk_start + 2000 || message.time < chunk_start - 2000) {
+            chunks.push(chunk);
+            chunk = [];
+            chunk_start = message.time;
+        }
+
+        chunk.push(message);
     }
 
-    if (current_chunk.length > 0) {
-        chunks.push(current_chunk);
+    if (chunk.length > 0) {
+        chunks.push(chunk);
     }
+
 
     return chunks;
-})
+}
+
+
+
