@@ -1,9 +1,11 @@
 import { randomUUID } from 'crypto';
 import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 import ws from 'ws';
+import { e_asset } from '../../enums/e_asset';
 import { t_message } from '../../types/t_message';
 import { t_saved_chat } from '../../types/t_saved_chat';
 import { t_seventv_emote } from '../../types/t_seventv_emote';
+import is_dev from '../../utils/is_dev';
 import logging from './../../logging/logging';
 import globals from './../globals';
 import seventv from './7tv';
@@ -15,6 +17,8 @@ namespace chat {
     let logger = logging.get_logger().withContext("chat");
     let socket: ws;
     let session_id: string = "";
+    let channel_emotes: t_seventv_emote[] = [];
+    let global_emotes: t_seventv_emote[] = [];
     export let saved_chat: t_saved_chat = {
         channel_name: globals.channel_name,
         title: "",
@@ -33,8 +37,8 @@ namespace chat {
             saved_chat.title = await client.get_stream_title();
             saved_chat.messages = [];
 
-            let channel_emotes = await seventv.get_channel_emotes(globals.channel_id.toString());
-            let global_emotes = await seventv.get_global_emotes();
+            channel_emotes = await seventv.get_channel_emotes(globals.channel_id.toString());
+            global_emotes = await seventv.get_global_emotes();
 
             try {
                 socket = new ws("wss://irc-ws.chat.twitch.tv:443");
@@ -116,8 +120,43 @@ namespace chat {
         logger.info("Chat Folders Initialized")
     }
 
-    function handle_chat_message(message: t_message) {
+    async function handle_chat_message(message: t_message) {
+        let message_words = message.message.split(" ");
+
+        for (let i = 0; i < message_words.length; i++) {
+            let word = message_words[i];
+            //get emote 
+            let emote = channel_emotes.find((emote) => {
+                return emote.name == word;
+            });
+
+            if (!emote) {
+                emote = global_emotes.find((emote) => {
+                    return emote.name == word;
+                });
+            }
+
+            if (!emote) {
+                emote = await seventv.get_emote_by_name(word);
+            }
+
+            if (emote) {
+                let url_options = emote.urls;
+                let url: string = url_options[1][1];
+                message.emotes.push({
+                    name: emote.name,
+                    url: url,
+                    type: e_asset.emote
+                });
+            } else {
+                //logger.error("Could not find emote " + word)
+            }
+        }
+
         saved_chat.messages.push(message);
+
+        if (is_dev())
+            save_chat();
     }
 
     function sanitize_message(message: t_message): t_message {
