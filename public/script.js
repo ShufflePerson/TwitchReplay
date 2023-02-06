@@ -1,7 +1,7 @@
 
 let twitch_username = "xqc";
 let stream_title = "";
-let settings= {};
+let settings = {};
 
 function render_twitch() {
     new Twitch.Embed("twitch-embed", {
@@ -39,7 +39,7 @@ function add_clips(data) {
                 clone.children[0].play();
             else
                 clone.children[0].pause();
-  
+
         };
         document.getElementById("clips").appendChild(clone);
 
@@ -63,8 +63,8 @@ function update_elements() {
     Object.keys(settings).forEach(function (key) {
         let element = document.getElementsByName(key);
         if (element) {
-            if(element && element[0])
-            element[0].value = settings[key];
+            if (element && element[0])
+                element[0].value = settings[key];
         }
     });
 
@@ -79,7 +79,7 @@ function clip() {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            "duration": slider.value
+            "duration": slider.value * 60
         })
     }).then(response => response.json())
         .then(data => {
