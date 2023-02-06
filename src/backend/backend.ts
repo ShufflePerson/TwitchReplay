@@ -7,6 +7,8 @@ import globals from './../twitch/globals';
 import ffmpeg from 'fluent-ffmpeg'
 import { join } from "path";
 import clipper from '../clipper/clipper';
+import ui_chat from '../ui_chat/ui_chat';
+import chat from '../twitch/modules/chat';
 
 
 
@@ -50,10 +52,15 @@ namespace backend {
         });
 
         app.post("/api/clip", async (req, res) => {
-            const { duration } = req.body;
+            let { duration } = req.body;
+            duration *= 1000;
             let current_clips = readdirSync(get_config().targetDirectory);
 
-            let saved_path = await clipper.clip(duration * 60)
+            const { file, clip_length } = await clipper.clip(duration / 1000);
+            let clip_start = Date.now() - clip_length;
+            let clip_end = Date.now();
+            let saved_path: string = await ui_chat.convert_and_export(chat.saved_chat.messages, file, clip_start, clip_end);
+
             if (!saved_path)
                 log.error("Failed to clip the stream.");
             else
