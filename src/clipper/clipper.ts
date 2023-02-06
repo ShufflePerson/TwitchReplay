@@ -161,12 +161,17 @@ namespace clipper {
 
 
 
-    export function clip(time_s: number = globals.buffer_size): Promise<string> {
+    export function clip(time_s: number = globals.buffer_size): Promise<{
+        file: string,
+        clip_length: number
+    }> {
         return new Promise(async (resolve, reject) => {
-            await wait_for_buffer();
 
             let buffer_needed: number = Math.round(time_s / globals.buffer_size);
             let buffer_available: number = fs.readdirSync("./cache/buffer").length - 1;
+
+            if (buffer_needed > buffer_available)
+                await wait_for_buffer();
 
             logger.debug("Buffer needed: " + buffer_needed);
             logger.debug("Buffer available: " + buffer_available);
@@ -197,10 +202,16 @@ namespace clipper {
                     logger.debug(command_line);
                 }).on("error", function (err) {
                     logger.error("An error occurred: " + err.message)
-                    resolve("");
+                    resolve({
+                        file: "",
+                        clip_length: 0
+                    });
                 }).on("end", function () {
                     logger.info("Clip written");
-                    resolve(output_name);
+                    resolve({
+                        file: output_name,
+                        clip_length: time_s * 1000
+                    });
                 })
 
 
