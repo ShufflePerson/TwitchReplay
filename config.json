@@ -1,6 +1,6 @@
 {
-    "targetUsername": "xqc",
+    "targetUsername": "kaicenat",
     "targetDirectory": "./clips",
-    "videoFormat": "mkv",
-    "serverPort": "80"
+    "videoFormat": "mp4",
+    "serverPort": "8080"
 }
