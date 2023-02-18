@@ -23,8 +23,8 @@ let logger = logging.get_logger().withContext("main");
 readline.emitKeypressEvents(process.stdin);
 
 function start_clearing_service() {
+    return; //need to fix this (globals.buffer_size is only the buffer size and not the whole clip len)
     setInterval(() => {
-
         chat.delete_chat_before(Date.now() - globals.buffer_size * 1000);
     }, globals.buffer_size * 1000);
 }
@@ -65,13 +65,24 @@ function start_clearing_service() {
         return;
     }
 
+    ui_chat.start_recording();
+
+/*    setTimeout(() => {
+      ui_chat.save_recording(10);
+    }, 15000);
+*/
+
+
+    /*
+    let test_clip_time = 20;
     setTimeout(async () => {
         logger.info("Exporting clip");
-        let clip_start = Date.now() - globals.buffer_size * 1000;
+        let clip_start = Date.now() - test_clip_time * 1000;
         let clip_end = Date.now();
         let exported_path: string = await ui_chat.convert_and_export(chat.saved_chat.messages, await clipper.clip(10), clip_start, clip_end);
         logger.info(`Exported clip to ${exported_path}`)
-    }, globals.buffer_size * 1100);
+    }, test_clip_time * 1000);
+    */
 
 
 })();
