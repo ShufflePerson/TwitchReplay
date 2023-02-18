@@ -4,6 +4,9 @@ Similar to OBS Replay Buffer but for Twitch.
 
 To understand about the Twitch frontend API and how to use it, check out [notes.md](notes.MD).
 
+## Screenshots
+[Click to open](/images/screenshot.png)
+
 ## Todo
 
 - [x] Implement Chat functionality
@@ -16,8 +19,8 @@ To understand about the Twitch frontend API and how to use it, check out [notes.
 
 ## Features
 
-- Automatically record the last `x` minutes of your stream, `x` being the number you set in the config.
-- Automatically syncs and adds chat replay to the video.
+- Able to clip the last `x` minutes of the target stream.
+- Automatically syncs and adds chat replay to the video including 7TV and Twitch emotes. Animation supported. 
 - Exports video in chosen format (mp4, mkv, webm, etc.)
 
 ## Requirements
