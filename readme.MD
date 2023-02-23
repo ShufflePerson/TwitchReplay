@@ -9,13 +9,7 @@ To understand about the Twitch frontend API and how to use it, check out [notes.
 
 ## Todo
 
-- [x] Implement Chat functionality
-  - [x] Get Current Chat
-  - [x] Keep Chat in sync and saved in a efficient way
-- [x] Blend Chat & Video
-  - [x] A frontend for the Chat
-  - [x] A way to export the frontend of the chat with the video
-- [x] Implement a UI
+- Prettier chat UI
 
 ## Features
 
